@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<title>OPR Generator SK Kerunai</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{
+    background:#f4f6f9;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+/* ===== WRAPPER ===== */
+.main-wrapper{
+    max-width:900px;
+    margin:0 auto;
+}
+
+/* ===== HEADER ===== */
+.app-header{
+    background:#fff;
+    padding:20px 30px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    margin-bottom:25px;
+}
+
+.app-header-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.app-header img{ height:70px; }
+
+.app-header-center{
+    text-align:center;
+}
+
+.app-header-bar{
+    background:#155e75;
+    color:#fff;
+    text-align:center;
+    font-weight:700;
+    padding:10px;
+    border-radius:8px;
+    margin-top:18px;
+}
+
+/* ===== FORM ===== */
+.app-container{
+    background:#fff;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    margin-bottom:40px;
+}
+
+.section-title{
+    background:#0d6efd;
+    color:#fff;
+    padding:6px 12px;
+    border-radius:5px;
+    margin-top:25px;
+    margin-bottom:15px;
+    font-weight:bold;
+}
+
+/* ===== PDF ===== */
+#report-content{
+    width:210mm;
+    min-height:297mm;
+    padding:12mm;
+    background:#fff;
+    position:absolute;
+    left:-9999px;
+    visibility:hidden;
+    font-family:"Times New Roman", serif;
+}
+
+.pdf-header{
+    display:flex;
+    align-items:center;
+    border-bottom:2px solid #000;
+    padding-bottom:8px;
+    margin-bottom:10px;
+}
+
+.pdf-header img{ width:75px; }
+
+.header-text{
+    flex:1;
+    text-align:center;
+}
+
+.opr-title{
+    background:#000;
+    color:#fff;
+    text-align:center;
+    font-weight:bold;
+    padding:5px;
+    margin:12px 0;
+    font-size:12pt;
+}
+
+.report-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:11pt;
+    margin-bottom:12px;
+}
+
+.report-table td{
+    border:1px solid #000;
+    padding:6px;
+    vertical-align:top;
+}
+
+.label-col{
+    width:25%;
+    font-weight:bold;
+    background:#f2f2f2;
+}
+
+/* ===== IMAGES 2x2 (NO CAPTION) ===== */
+.image-table td{
+    height:190px;
+    padding:6px;
+}
+
+.image-table img{
+    width:100%;
+    height:190px;
+    object-fit:cover;
+    border:1px solid #000;
+}
+
+.sign-box{
+    margin-top:25px;
+    text-align:right;
+    font-size:11pt;
+}
+
+/* ===== PRINT ===== */
+@media print{
+    body *{ visibility:hidden; }
+    #report-content, #report-content *{ visibility:visible; }
+    #report-content{
+        position:absolute;
+        left:0;
+        top:0;
+        width:210mm;
+    }
+    @page{
+        size:A4;
+        margin:10mm;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container mt-4">
+<div class="main-wrapper">
+
+<!-- HEADER -->
+<div class="app-header">
+    <div class="app-header-top">
+        <img src="logo-sekolah.png">
+        <div class="app-header-center">
+            <strong>KEMENTERIAN PENDIDIKAN MALAYSIA</strong><br>
+            <strong>SEKOLAH KEBANGSAAN KERUNAI</strong><br>
+            GERIK, PERAK
+        </div>
+        <img src="logo-ts25.png">
+    </div>
+    <div class="app-header-bar">
+        ONE PAGE REPORT (OPR) GENERATOR
+    </div>
+</div>
+
+<!-- FORM -->
+<div class="app-container">
+<form>
+
+<div class="section-title">Maklumat Asas</div>
+<input class="form-control mb-3" id="in_nama" placeholder="Nama Program">
+
+<div class="row">
+<div class="col-md-6"><input class="form-control mb-3" id="in_anjuran" placeholder="Anjuran"></div>
+<div class="col-md-6"><input class="form-control mb-3" id="in_sasaran" placeholder="Sasaran"></div>
+</div>
+
+<div class="row">
+<div class="col-md-4"><input type="date" class="form-control mb-3" id="in_tarikh"></div>
+<div class="col-md-4"><input class="form-control mb-3" id="in_masa" placeholder="Masa"></div>
+<div class="col-md-4"><input class="form-control mb-3" id="in_tempat" placeholder="Tempat"></div>
+</div>
+
+<div class="section-title">Perincian</div>
+<textarea class="form-control mb-2" rows="3" id="in_objektif" placeholder="Objektif"></textarea>
+<textarea class="form-control mb-2" rows="3" id="in_aktiviti" placeholder="Aktiviti"></textarea>
+
+<div class="section-title">Analisis</div>
+<textarea class="form-control mb-2" rows="2" id="in_kekuatan" placeholder="Kekuatan"></textarea>
+<textarea class="form-control mb-2" rows="2" id="in_kelemahan" placeholder="Kelemahan"></textarea>
+<textarea class="form-control mb-2" rows="2" id="in_cadangan" placeholder="Cadangan"></textarea>
+
+<div class="section-title">Gambar & Pengesahan</div>
+<input type="file" class="form-control mb-2" id="in_gambar" multiple>
+<input class="form-control mb-3" id="in_disediakan" placeholder="Disediakan oleh">
+
+<button type="button" class="btn btn-primary w-100" onclick="prepareReport()">
+JANA PDF
+</button>
+
+</form>
+</div>
+
+</div>
+</div>
+
+<!-- PDF -->
+<div id="report-content">
+
+<div class="pdf-header">
+<img src="logo-sekolah.png">
+<div class="header-text">
+<strong>KEMENTERIAN PENDIDIKAN MALAYSIA</strong><br>
+<strong>SEKOLAH KEBANGSAAN KERUNAI</strong>
+</div>
+<img src="logo-ts25.png">
+</div>
+
+<div class="opr-title">ONE PAGE REPORT (OPR)</div>
+
+<table class="report-table">
+<tr><td class="label-col">Nama Program</td><td colspan="3" id="out_nama"></td></tr>
+<tr><td class="label-col">Tarikh</td><td id="out_tarikh"></td><td class="label-col">Masa</td><td id="out_masa"></td></tr>
+<tr><td class="label-col">Tempat</td><td id="out_tempat"></td><td class="label-col">Anjuran</td><td id="out_anjuran"></td></tr>
+<tr><td class="label-col">Sasaran</td><td colspan="3" id="out_sasaran"></td></tr>
+<tr><td class="label-col">Objektif</td><td colspan="3" id="out_objektif"></td></tr>
+<tr><td class="label-col">Aktiviti</td><td colspan="3" id="out_aktiviti"></td></tr>
+<tr><td class="label-col">Kekuatan</td><td colspan="3" id="out_kekuatan"></td></tr>
+<tr><td class="label-col">Kelemahan</td><td colspan="3" id="out_kelemahan"></td></tr>
+<tr><td class="label-col">Cadangan</td><td colspan="3" id="out_cadangan"></td></tr>
+</table>
+
+<table class="report-table image-table">
+<tr>
+<td id="img1"></td>
+<td id="img2"></td>
+</tr>
+<tr>
+<td id="img3"></td>
+<td id="img4"></td>
+</tr>
+</table>
+
+<div class="sign-box">
+Disediakan oleh:<br><strong id="out_disediakan"></strong>
+</div>
+
+</div>
+
+<script>
+function prepareReport(){
+const v=id=>document.getElementById(id).value;
+set("out_nama",v("in_nama").toUpperCase());
+set("out_masa",v("in_masa"));
+set("out_tempat",v("in_tempat"));
+set("out_anjuran",v("in_anjuran"));
+set("out_sasaran",v("in_sasaran"));
+html("out_objektif",v("in_objektif"));
+html("out_aktiviti",v("in_aktiviti"));
+html("out_kekuatan",v("in_kekuatan"));
+html("out_kelemahan",v("in_kelemahan"));
+html("out_cadangan",v("in_cadangan"));
+set("out_disediakan",v("in_disediakan"));
+
+const d=new Date(v("in_tarikh"));
+set("out_tarikh",d.toLocaleDateString("ms-MY",{day:"numeric",month:"long",year:"numeric"}));
+
+loadImages();
+setTimeout(()=>window.print(),500);
+}
+
+function set(id,val){document.getElementById(id).innerText=val;}
+function html(id,val){document.getElementById(id).innerHTML=val.replace(/\n/g,"<br>");}
+
+function loadImages(){
+const files=document.getElementById("in_gambar").files;
+for(let i=1;i<=4;i++) document.getElementById("img"+i).innerHTML="";
+for(let i=0;i<Math.min(files.length,4);i++){
+const r=new FileReader();
+const c=document.getElementById("img"+(i+1));
+r.onload=e=>c.innerHTML=`<img src="${e.target.result}">`;
+r.readAsDataURL(files[i]);
+}
+}
+</script>
+
+</body>
+</html>
